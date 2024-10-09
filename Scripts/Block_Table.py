@@ -41,7 +41,7 @@ def insert_block(duckPath,arquivePath):
     amount=result[0]
     
     Ç = 'id'
-    Z = f'row_number() OVER () + {amount} AS id'
+    Z = f'row_number() OVER () + {amount-1} AS id'
     A = 'number'
     B = 'hash'
     C = 'parent_hash'
@@ -68,10 +68,31 @@ def insert_block(duckPath,arquivePath):
 
     con.sql(f"INSERT INTO blocks({Ç},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T}) SELECT {Z},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T} FROM read_csv_auto('{arquivePath}')")
     con.close()
+    check_block(duckPath)
 
-def show_block(duckPath):
-    con=duckdb.connect(database=duckPath,read_only=True)
-    con.sql("show * from blocks")
+def check_block(duckPath):
+    con=duckdb.connect(database=duckPath,read_only=False)
+    result=con.sql("SELECT COUNT(*) FROM blocks").fetchone()
+    amount=result[0]
+
+    for i in range(amount-10000,amount-1):
+        check1=con.sql(f"SELECT id FROM blocks WHERE id={i}")
+        check2=con.sql(f"SELECT number FROM blocks WHERE number={i}")
+
+        if check1!=check2:
+            print("-----ERRO-----")
+            con.close()
+            delete_block(duckPath,amount-10000,amount)
+        print("funfa")
+
+def delete_block(duckPath,interval1,interval2):
+    con=duckdb.connect(database=duckPath,read_only=False)
+    con.sql(f"DELETE FROM blocks WHERE id >= {interval1} AND id <= {interval2};")
+    con.close()
+
+def show_block(duckPath,interval1,interval2):
+    con=duckdb.connect(database=duckPath,read_only=False)
+    con.sql(f"SELECT * FROM blocks WHERE id >= {interval1} AND id <= {interval2}")
     con.close()
 
 def block_interface():
@@ -88,7 +109,7 @@ def block_interface():
     print("insira '5' para mostrar valores da table 'blocks'")
     print()
 
-    function=int(input())
+    function=int(input("> "))
     if function == 1:
         print()
         print("CRIANDO TABLE ......")
@@ -103,9 +124,18 @@ def block_interface():
         print()
         print("INSERINDO TUBLAS ......")
         insert_block(duckPath,arquivePath)
+    if function == 4:
+        print()
+        print("Insira o intervalo a ser deletado:")
+        interval1=int(input("> "))
+        interval2=int(input("> "))
+        delete_block(duckPath,interval1,interval2)
     if function == 5:
         print()
-        show_block(duckPath)
+        print("Insira o intervalo a ser mostrado:")
+        interval1=int(input("> "))
+        interval2=int(input("> "))
+        show_block(duckPath,interval1,interval2)
 
 if __name__ == "__main__":
     
