@@ -37,8 +37,8 @@ def drop_block(duckPath):
 
 def insert_block(duckPath,arquivePath):
     con=duckdb.connect(database=duckPath,read_only=False)
-    result=con.sql("SELECT COUNT(*) FROM blocks").fetchone()
-    amount=result[0]
+    result1=con.sql("SELECT COUNT(*) FROM blocks").fetchone()
+    amount=result1[0]
     
     Ç = 'id'
     Z = f'row_number() OVER () + {amount-1} AS id'
@@ -68,21 +68,20 @@ def insert_block(duckPath,arquivePath):
 
     con.sql(f"INSERT INTO blocks({Ç},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T}) SELECT {Z},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T} FROM read_csv_auto('{arquivePath}')")
     con.close()
-    check_block(duckPath)
+    ##check_block(duckPath)
 
 def check_block(duckPath):
     con=duckdb.connect(database=duckPath,read_only=False)
-    result=con.sql("SELECT COUNT(*) FROM blocks").fetchone()
-    amount=result[0]
+    result2=con.sql("SELECT COUNT(*) FROM blocks").fetchone()
+    amount2=result2[0]
 
-    for i in range(amount-10000,amount-1):
+    for i in range(amount2-10000,amount2-1):
         check1=con.sql(f"SELECT id FROM blocks WHERE id={i}")
         check2=con.sql(f"SELECT number FROM blocks WHERE number={i}")
 
         if check1!=check2:
             print("-----ERRO-----")
-            con.close()
-            delete_block(duckPath,amount-10000,amount)
+            delete_block(duckPath,amount2-10000,amount2)
         print("funfa")
 
 def delete_block(duckPath,interval1,interval2):
@@ -92,7 +91,9 @@ def delete_block(duckPath,interval1,interval2):
 
 def show_block(duckPath,interval1,interval2):
     con=duckdb.connect(database=duckPath,read_only=False)
-    con.sql(f"SELECT * FROM blocks WHERE id >= {interval1} AND id <= {interval2}")
+    result=con.sql(f"SELECT id,number FROM blocks WHERE id >= {interval1} AND id <= {interval2}").fetchall()
+    for i in result:
+        print(i)
     con.close()
 
 def block_interface():
