@@ -101,7 +101,7 @@ def block_interface():
 
     duckPath='~/Ethereum Data Analyse/Database/ethereum_database.db'
 
-    print("Este script serve para a manipulação da Table 'blocks' da database")
+    print("ESTE SCRIPT TEM A FUNÇÃO DA MANIPULAÇÃO DA TABLE 'blocks' DA DATABASE")
     print()
     print("insira '1' para criar a table 'blocks'")
     print("insira '2' para excluir a table 'blocks'")
