@@ -103,7 +103,7 @@ def interface_transactions():
         print("Insira o intervalo a ser mostrado:")
         interval1=int(input("> "))
         interval2=int(input("> "))
-        show_block(duckPath,interval1,interval2)
+      
 
 if __name__ == "__main__":
     
