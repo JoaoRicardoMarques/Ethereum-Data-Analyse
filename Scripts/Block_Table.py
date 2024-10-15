@@ -1,5 +1,6 @@
 import duckdb
 import subprocess
+import os
 
 def create_block(duckPath):
     con=duckdb.connect(database=duckPath,read_only=False)
@@ -68,21 +69,18 @@ def insert_block(duckPath,arquivePath):
 
     con.sql(f"INSERT INTO blocks({Ç},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T}) SELECT {Z},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T} FROM read_csv_auto('{arquivePath}')")
     con.close()
-    ##check_block(duckPath)
+    check_block(duckPath)
 
 def check_block(duckPath):
     con=duckdb.connect(database=duckPath,read_only=False)
-    result2=con.sql("SELECT COUNT(*) FROM blocks").fetchone()
-    amount2=result2[0]
-
-    for i in range(amount2-10000,amount2-1):
-        check1=con.sql(f"SELECT id FROM blocks WHERE id={i}")
-        check2=con.sql(f"SELECT number FROM blocks WHERE number={i}")
-
-        if check1!=check2:
-            print("-----ERRO-----")
-            delete_block(duckPath,amount2-10000,amount2)
-        print("funfa")
+    amount=con.sql("SELECT COUNT(*) FROM blocks").fetchone()[0]
+    errors=con.sql('SELECT COUNT(*) FROM blocks WHERE id != number').fetchone()[0]
+    con.close()
+    if errors>0:
+        delete_block(duckPath,amount-10000,amount)
+        print("erro")
+    else:
+        print('dados inseridos com sucesso')
 
 def delete_block(duckPath,interval1,interval2):
     con=duckdb.connect(database=duckPath,read_only=False)
@@ -137,7 +135,24 @@ def block_interface():
         interval1=int(input("> "))
         interval2=int(input("> "))
         show_block(duckPath,interval1,interval2)
-
+    if function == 6:
+        print()
+        print("Insira a quantidade de arquivos a serem inseridos:")
+        amount=int(input("> "))
+        initial_block=int(input("> "))
+        final_block=initial_block+9999
+        for i in range(0,amount):
+            if 9999<initial_block<99999:
+                arquivePath=f"/home/joao/ethereum-contracts-data-extract/data/csvs/blocks-00000{initial_block}-00000{final_block}.csv"
+            if 99999<initial_block<999999:
+                arquivePath=f"/home/joao/ethereum-contracts-data-extract/data/csvs/blocks-0000{initial_block}-0000{final_block}.csv"
+            if 999999<initial_block<9999999:
+                arquivePath=f"/home/joao/ethereum-contracts-data-extract/data/csvs/blocks-000{initial_block}-000{final_block}.csv"
+        
+            insert_block(duckPath,arquivePath)
+            initial_block+=10000
+            final_block+=10000
 if __name__ == "__main__":
-    
+    ##duckPath='~/Ethereum Data Analyse/Database/ethereum_database.db'
     block_interface()
+    

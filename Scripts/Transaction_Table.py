@@ -1,28 +1,28 @@
 import duckdb
 import subprocess
-
+import os
 
 def create_transactions(duckPath):
     con=duckdb.connect(database=duckPath,read_only=False)
 
-    ça = 'id bigint primary key'
-    çb = 'id_block bigint'
-    çc = 'foreign key (id_block) references blocks(id)'
-    a = 'hash VARCHAR'
-    b = 'nonce BIGINT'
-    c = 'block_hash VARCHAR'
-    d = 'block_number BIGINT'
-    e = 'transaction_index BIGINT'
-    f = 'from_address VARCHAR'
-    g = 'to_address VARCHAR'
-    h = 'value VARCHAR'
-    i = 'gas BIGINT'
-    j = 'gas_price BIGINT'
-    k = 'input VARCHAR'
-    l = 'block_timestamp BIGINT'
-    m = 'max_fee_per_gas BIGINT'
-    n = 'max_priority_fee_per_gas BIGINT'
-    o = 'transaction_type BIGINT'
+    a = 'id bigint primary key'
+    b = 'id_block bigint'
+    c = 'foreign key (id_block) references blocks(id)'
+    d = 'hash VARCHAR'
+    e = 'nonce BIGINT'
+    f = 'block_hash VARCHAR'
+    g = 'block_number BIGINT'
+    h = 'transaction_index BIGINT'
+    i = 'from_address VARCHAR'
+    j = 'to_address VARCHAR'
+    k = 'value VARCHAR'
+    l = 'gas BIGINT'
+    m = 'gas_price BIGINT'
+    n = 'input VARCHAR'
+    o = 'block_timestamp BIGINT'
+    p = 'max_fee_per_gas BIGINT'
+    q = 'max_priority_fee_per_gas BIGINT'
+    r = 'transaction_type BIGINT'
 
     con.sql(f"CREATE TABLE transactions({ça},{çb},{a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{çc})")
     con.sql(f"CREATE TABLE brute_transactions({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o})")
@@ -38,6 +38,8 @@ def drop_transactions(duckPath):
 def insert_transactions(duckPath, arquivePath):
     con = duckdb.connect(database=duckPath, read_only=False)
 
+    ça = 'id'
+    çb = 'id_block'
     a = 'hash'
     b = 'nonce'
     c = 'block_hash'
@@ -55,6 +57,15 @@ def insert_transactions(duckPath, arquivePath):
     o = 'transaction_type'
     
     con.sql(f"INSERT INTO brute_transactions({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o}) SELECT * FROM read_csv_auto('{arquivePath}')")
+    
+    con.sql(f"DELETE FROM brute_transactions WHERE to_address IS NOT NULL")
+    
+    amount=con.sql(f"SELECT COUNT(*) FROM brute_transactions").fetchone
+
+    sequence=f'row_number() OVER () + {amount-1} AS id'
+
+    con.sql(f"INSERT INTO transactions ({ça},{çb},{a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o}) SELECT {sequence},{result2},{a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o} FROM brute_transactions")
+
     con.close()
     delete_transactions(duckPath,0)
 
