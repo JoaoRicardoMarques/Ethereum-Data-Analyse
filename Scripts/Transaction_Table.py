@@ -24,8 +24,8 @@ def create_transactions(duckPath):
     q = 'max_priority_fee_per_gas BIGINT'
     r = 'transaction_type BIGINT'
 
-    con.sql(f"CREATE TABLE transactions({ça},{çb},{a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{çc})")
-    con.sql(f"CREATE TABLE brute_transactions({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o})")
+    con.sql(f"CREATE TABLE transactions({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{p},{q},{r})")
+    con.sql(f"CREATE TABLE brute_transactions({d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{p},{q},{r})")
 
     con.close()
 
@@ -38,35 +38,53 @@ def drop_transactions(duckPath):
 def insert_transactions(duckPath, arquivePath):
     con = duckdb.connect(database=duckPath, read_only=False)
 
-    ça = 'id'
-    çb = 'id_block'
-    a = 'hash'
-    b = 'nonce'
-    c = 'block_hash'
-    d = 'block_number'
-    e = 'transaction_index'
-    f = 'from_address'
-    g = 'to_address'
-    h = 'value'
-    i = 'gas'
-    j = 'gas_price'
-    k = 'input'
-    l = 'block_timestamp'
-    m = 'max_fee_per_gas'
-    n = 'max_priority_fee_per_gas'
-    o = 'transaction_type'
-    
-    con.sql(f"INSERT INTO brute_transactions({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o}) SELECT * FROM read_csv_auto('{arquivePath}')")
-    
-    con.sql(f"DELETE FROM brute_transactions WHERE to_address IS NOT NULL")
-    
-    amount=con.sql(f"SELECT COUNT(*) FROM brute_transactions").fetchone
+    a = 'id'
+    b = 'id_block'
+    c = 'hash'
+    d = 'nonce'
+    e = 'block_hash'
+    f = 'block_number'
+    g = 'transaction_index'
+    h = 'from_address'
+    i = 'to_address'
+    j = 'value'
+    k = 'gas'
+    l = 'gas_price'
+    m = 'input'
+    n = 'block_timestamp'
+    o = 'max_fee_per_gas'
+    p = 'max_priority_fee_per_gas'
+    q = 'transaction_type'
 
-    sequence=f'row_number() OVER () + {amount-1} AS id'
+    
+    A = 'brute_transactions.hash'
+    B = 'brute_transactions.nonce'
+    C = 'brute_transactions.block_hash'
+    D = 'brute_transactions.block_number'
+    E = 'brute_transactions.transaction_index'
+    F = 'brute_transactions.from_address'
+    G = 'brute_transactions.to_address'
+    H = 'brute_transactions.value'
+    I = 'brute_transactions.gas'
+    J = 'brute_transactions.gas_price'
+    K = 'brute_transactions.input'
+    L = 'brute_transactions.block_timestamp'
+    M = 'brute_transactions.max_fee_per_gas'
+    N = 'brute_transactions.max_priority_fee_per_gas'
+    O = 'brute_transactions.transaction_type'
 
-    con.sql(f"INSERT INTO transactions ({ça},{çb},{a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o}) SELECT {sequence},{result2},{a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o} FROM brute_transactions")
+    con.sql(f"INSERT INTO brute_transactions({c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{p},{q}) SELECT * FROM read_csv_auto('{arquivePath}')")
+
+    con.sql(f"DELETE FROM brute_transactions WHERE to_address IS NOT NULL OR input = '0x'")
+
+    amount = con.sql(f"SELECT COUNT(*) FROM transactions").fetchone()[0]
+
+    sequence = f'row_number() OVER () + {amount-1} AS id'
+
+    con.sql(f"INSERT INTO transactions ({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{p},{q}) SELECT {sequence},blocks.id,{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O} FROM brute_transactions INNER JOIN blocks ON blocks.id = brute_transactions.block_number")
 
     con.close()
+
     delete_transactions(duckPath,0)
 
 def delete_transactions(duckPath,function):
@@ -80,7 +98,7 @@ def delete_transactions(duckPath,function):
         con.sql(f"DELETE FROM transactions WHERE id>={interval1} AND id<={interval2}")
 
 def interface_transactions():
-    duckPath='~/Ethereum Data Analyse/Database/ethereum_database.db'
+    duckPath='~/Ethereum Data Analyse/Database/teste.db'
 
     print("ESTE SCRIPT TEM A FUNÇÃO DA MANIPULAÇÃO DA TABLE 'transactions' DA DATABASE")
     print()
@@ -117,5 +135,6 @@ def interface_transactions():
       
 
 if __name__ == "__main__":
-    
-    interface_transactions
+    duckPath='~/Ethereum Data Analyse/Database/teste.db'
+    interface_transactions()
+    ##delete_transactions(duckPath,0)

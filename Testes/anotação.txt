@@ -1,0 +1,12 @@
+duckPath='~/Área de Trabalho/Ethereum_Dataset/Databases/Ethereum_Database'
+    inicio=0
+    fim=190
+    initial=2000000
+    final=2009999
+    for i in range(inicio,fim):
+        
+        print(f'ethereum-contracts-data-extract/data/csvs/blocks-000{initial}-000{final}.csv')
+        arquivePath=f'~/ethereum-contracts-data-extract/data/csvs/blocks-000{initial}-000{final}.csv'
+        insert_block(duckPath,arquivePath)
+        initial=initial+10000
+        final=final+10000

@@ -69,7 +69,7 @@ def insert_block(duckPath,arquivePath):
 
     con.sql(f"INSERT INTO blocks({Ç},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T}) SELECT {Z},{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O},{P},{Q},{R},{S},{T} FROM read_csv_auto('{arquivePath}')")
     con.close()
-    check_block(duckPath)
+    ##check_block(duckPath)
 
 def check_block(duckPath):
     con=duckdb.connect(database=duckPath,read_only=False)
@@ -97,7 +97,7 @@ def show_block(duckPath,interval1,interval2):
 def block_interface():
 
 
-    duckPath='~/Ethereum Data Analyse/Database/ethereum_database.db'
+    duckPath='~/Ethereum Data Analyse/Database/teste.db'
 
     print("ESTE SCRIPT TEM A FUNÇÃO DA MANIPULAÇÃO DA TABLE 'blocks' DA DATABASE")
     print()
