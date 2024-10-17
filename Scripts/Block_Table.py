@@ -97,7 +97,7 @@ def show_block(duckPath,interval1,interval2):
 def block_interface():
 
 
-    duckPath='~/Ethereum Data Analyse/Database/teste.db'
+    duckPath='~/Ethereum Data Analyse/Database/ETH-450000-499999.db'
 
     print("ESTE SCRIPT TEM A FUNÇÃO DA MANIPULAÇÃO DA TABLE 'blocks' DA DATABASE")
     print()
