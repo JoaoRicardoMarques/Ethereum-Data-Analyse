@@ -95,10 +95,17 @@ def delete_transactions(duckPath,function):
         print("Insira o intervalo a ser deletado:")
         interval1=int(input("> "))
         interval2=int(input("> "))
-        con.sql(f"DELETE FROM transactions WHERE id>={interval1} AND id<={interval2}")
+        con.sql(f"DELETE FROM transactions WHERE id_block>={interval1} AND id_block<={interval2}")
+
+def show_transactions(duckPath,interval1,interval2):
+    con=duckdb.connect(database=duckPath,read_only=False)
+    result=con.sql(f"SELECT id,id_block FROM transactions WHERE id_block >= {interval1} AND id_block <= {interval2}").fetchall()
+    for i in result:
+        print(i)
+    con.close()
 
 def interface_transactions():
-    duckPath='~/Ethereum Data Analyse/Database/teste.db'
+    duckPath='~/Ethereum Data Analyse/Database/ETH-0-49999.db'
 
     print("ESTE SCRIPT TEM A FUNÇÃO DA MANIPULAÇÃO DA TABLE 'transactions' DA DATABASE")
     print()
@@ -132,9 +139,9 @@ def interface_transactions():
         print("Insira o intervalo a ser mostrado:")
         interval1=int(input("> "))
         interval2=int(input("> "))
+        show_transactions(duckPath,interval1,interval2)
       
 
 if __name__ == "__main__":
-    duckPath='~/Ethereum Data Analyse/Database/teste.db'
     interface_transactions()
-    ##delete_transactions(duckPath,0)
+    
