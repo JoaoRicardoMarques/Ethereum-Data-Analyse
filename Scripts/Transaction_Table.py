@@ -81,6 +81,9 @@ def insert_transactions(duckPath, arquivePath):
 
     sequence = f'row_number() OVER () + {amount-1} AS id'
 
+    # CREATE SEQUENCE seq_blockid START 1;
+    # INSERT INTO Persons VALUES (nextval('seq_blockid'), 'Doe', 'John', 99);
+
     con.sql(f"INSERT INTO transactions ({a},{b},{c},{d},{e},{f},{g},{h},{i},{j},{k},{l},{m},{n},{o},{p},{q}) SELECT {sequence},blocks.id,{A},{B},{C},{D},{E},{F},{G},{H},{I},{J},{K},{L},{M},{N},{O} FROM brute_transactions INNER JOIN blocks ON blocks.id = brute_transactions.block_number")
 
     con.close()
@@ -129,7 +132,7 @@ def interface_transactions():
         print()
         arquivePath=input("Insira o local onde os arquivos extraídos estão armazenados:")
         print()
-        print("INSERINDO TUBLAS ......")
+        print("INSERINDO TUPLAS ......")
         insert_transactions(duckPath,arquivePath)
     if function == 4:
         print()
