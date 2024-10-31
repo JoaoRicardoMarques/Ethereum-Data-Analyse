@@ -1,46 +1,47 @@
 import subprocess
 import duckdb
-import sys
 
-#escreve o input dentro de arquivos para a evm ler 
-def writer(arquivo, input):
-    with open(arquivo, 'w') as file:
-        file.write(input)
+class disassembler: 
+    def writer(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=True)
+        
+        amount=con.sql("SELECT COUNT (*) FROM contracts").fetchone()[0]
+        
+        paths=[]
 
-def input_EVM(arquivo):
-    subprocess.run(['evm','disasm',arquivo],capture_output=True,text=True)
+        for i in range (amount):
 
-def output_EVM():
-    subprocess
+            arquivePath=f'/home/joao/Ethereum Data Analyse/Testes/bytecode{i}.asm'
 
-#retorna o input de dentro da contractCall_Database
-def disassembler(duckPath1,duckPath2,id):
-    con = duckdb.connect(database=duckPath2,read_only=False)
+            bytecode=con.sql(f"SELECT bytecode FROM contracts WHERE id = {i}").fetchone()[0]
 
-    input = con.sql(f"SELECT input FROM ContractCALL WHERE id={id}")
+            with open(arquivePath, 'w') as file:
+                file.write(bytecode)
 
-    arquivo = 'bitecode{id}.asm'
+            paths.append((arquivePath,i))
 
-    writer(arquivo,input)
+        con.close()
 
-    input_EVM(arquivo)
+        return paths
 
-    output_EVM
+    def disassembler(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=False)
 
-    con.close()
+        arquivePaths=disassembler.writer(duckPath)
+        
+        for arquivePath in arquivePaths:
 
-if __name__ == "__main__":
-    duckPath1='~/Área de Trabalho/Ethereum_Dataset/Ethereum_Database'
-    duckPath2='~/Área de Trabalho/Ethereum_Dataset/ContractCall_Database'
+            result=subprocess.run(['evm','disasm',arquivePath[0]],capture_output=True,text=True)
+            
+            for i in range(140):
+                
+                source=con.sql(f"SELECT name FROM opcodes WHERE id = {i}")
+                
+                query=result.stdout.split().count(str(source))
+                
+                if (query>0):
 
-    con=duckdb.connect(database=duckPath2,read_only=False)
+                    con.sql(f"INSERT INTO contract_have_opcodes VALUES ('{arquivePath[1]}','{i}','{query}')")
 
-    limite = con.sql(f"SELECT COUNT(*) FROM ContractCALL")
-
-    for i in limite:
-        disassembler()
-    
-
-    con.close()
-
+        con.close()
 

@@ -1,8 +1,14 @@
 import duckdb
-import sys
-
-def opcodes_Table(duckpath):
-    instructions = [
+class opcodes:
+    def create(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=False)
+        con.sql("CREATE TABLE opcodes (id BIGINT PRIMARY KEY, opcode CHAR, name VARCHAR)")
+        con.close()
+    def drop(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=False)
+        con.sql("DROP TABLE IF EXISTS opcodes")
+    def insert(duckPath):
+        instructions = [
         ("0", "00", "STOP"),
         ("1", "01", "ADD"),
         ("2", "02", "MUL"),
@@ -144,15 +150,17 @@ def opcodes_Table(duckpath):
         ("138", "f5", "CREATE2"),
         ("139", "fa", "STATICCALL"),
         ("140", "fd", "REVERT"),
-    ]
-    con = duckdb.connect(database=duckpath, read_only=False)
-    con.sql(f"DROP TABLE IF EXISTS opcodes")
-    con.sql(f"CREATE TABLE opcodes (id INT PRIMARY KEY, opcode CHAR, name VARCHAR)")
-    for instruction in instructions:
-        con.execute(f"INSERT INTO opcodes (id, opcode, name) VALUES ('{instruction[0]}', '{instruction[1]}', '{instruction[2]}')")
-    con.close()
+        ]
+        con = duckdb.connect(database=duckPath, read_only=False)
+        for instruction in instructions:
+            con.execute(f"INSERT INTO opcodes (id, opcode, name) VALUES ('{instruction[0]}', '{instruction[1]}', '{instruction[2]}')")
+        con.close()
+    def show(duckPath):
+        con=duckdb.connect(database=duckPath, read_only=True)
+        result=con.sql("SELECT * FROM opcodes").fetchall()
+        for i in result:
+            print(f"{i}")
+        con.close()
 
-if __name__ == "__main__":
-    duckpath='~/Área de Trabalho/Ethereum_Dataset/Databases/Ethereum_Database'
-    opcodes_Table(duckpath)
+
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

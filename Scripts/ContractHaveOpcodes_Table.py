@@ -1,15 +1,26 @@
 import duckdb
-import sys
+from Disassembler import disassembler
 
-def contracts_have_opcodes(duckpath):
-    con=duckdb.connect(database=duckpath, read_only=False)
-    A='id VARCHAR PRIMARY KEY'
-    B='id_opcodes INT'
-    C='Qntd INT'
-    D='FOREIGN KEY(hash) REFERENCES (hash)'
-    E='FOREIGN KEY(id_opcodes) REFERENCES opcodes(id)'
-    con.sql(f"CREATE TABLE codes_tem_opcodes({A},{B},{C},{D},{E})")
-    con.close()
-if __name__ == "__main__":
-    duckpath='~/Área de Trabalho/Ethereum_Dataset/Ethereum_Database'
-    contracts_have_opcodes(duckpath)
+class contracts_have_opcodes:
+    def create(duckpath):
+        con=duckdb.connect(database=duckpath, read_only=False)
+        a='id_contract BIGINT'
+        b='id_opcodes BIGINT'
+        c='Qntd INT'
+        d='FOREIGN KEY(id_contract) REFERENCES contracts(id)'
+        e='FOREIGN KEY(id_opcodes) REFERENCES opcodes(id)'
+        con.sql(f"CREATE TABLE contracts_have_opcodes({a},{b},{c},{d},{e})")
+        con.close()
+    def drop(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=False)
+        con.sql("DROP TABLE IF EXISTS contracts_have_opcodes")
+        con.close()
+    def insert(duckPath):
+        disassembler(duckPath)
+    def delete(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=False)
+        con.sql("DELETE FROM contracts_have_opcodes")
+        con.close()
+    def show(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=True)
+        result=con.sql("SELECT * FROM contracts_have_opcodes")
