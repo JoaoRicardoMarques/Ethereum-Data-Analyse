@@ -39,12 +39,12 @@ class blocks:
         con.sql(f"INSERT INTO blocks SELECT * FROM read_csv_auto('{arquivePath}')")
         con.close()
 
-    def delete(duckPath,interval1,interval2):
+    def delete(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)
         con.sql(f"DELETE FROM blocks")
         con.close()
 
-    def show(duckPath,interval1,interval2):
+    def show(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)
         result=con.sql(f"SELECT number FROM blocks").fetchall()
         for i in result:
