@@ -1,20 +1,16 @@
 import duckdb
-from Contractor import contractor
+
 
 class contract:
     def create(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)     
         a="id BIGINT PRIMARY KEY"
-        b="id_transactions BIGINT"
-        c="address VARCHAR"
-        d="bytecode VARCHAR"
-        e="function_sighashes VARCHAR"
-        f="is_erc20 BOOLEAN"
-        g="is_erc721 BOOLEAN"
-        h="block_number BIGINT"
-        i="FOREIGN KEY (id_transactions) REFERENCES transactions(id)"
-        con.sql(f"CREATE TABLE contracts({a},{b},{c},{d},{e},{f},{g},{h})")
-        con.sql(f"CREATE SEQUENCE contract_id")
+        b="address VARCHAR"
+        c="bytecode VARCHAR"
+        d="block_number BIGINT"
+        e="FOREIGN KEY (id) REFERENCES transactions(id)"
+        con.sql(f"CREATE TABLE contracts({a},{b},{c},{d},{e})")
+        con.sql(f"CREATE SEQUENCE contract_id START 0 MINVALUE 0")
         con.close()
 
     def drop(duckPath):
@@ -24,7 +20,6 @@ class contract:
 
     def insert(duckPath,arquivePath):
         con=duckdb.connect(database=duckPath,read_only=False)
-        contractor.contractor(duckPath)
         con.sql(f"INSERT INTO contracts SELECT nextval('contract_id'), * FROM read_csv_auto('{arquivePath}')")
         con.close()
 
