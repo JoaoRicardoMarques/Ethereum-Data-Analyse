@@ -10,7 +10,7 @@ duckPath = f"~/Ethereum Data Analyse/Database/database-{initial}-{initial+49999}
 
 #.create(duckPath)
 #transactions.create(duckPath)
-contract.create(duckPath)
+#contract.create(duckPath)
 #opcodes.create(duckPath)
 #contracts_have_opcodes.create(duckPath)
 
@@ -21,7 +21,7 @@ for i in range(5):
     #blocks.insert(duckPath,blockPath)
     #transactions.insert(duckPath,transactionPath)
     #contract.insert(duckPath,contractPath)
-    #opcodes.insert(duckPath)
+    opcodes.insert(duckPath)
     #contracts_have_opcodes.insert(duckPath)
     
     initial+=10000

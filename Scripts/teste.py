@@ -1,41 +1,32 @@
+import subprocess
 import duckdb
-from web3 import Web3
+import re
 
-def receipts(duckPath,apiPath):
-    con=duckdb.connect(database=duckPath, read_only=True)
-    w3=Web3(Web3.HTTPProvider(f'{apiPath}'))
+class disassembler: 
+    def writer(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=True)
+        amount=con.sql("SELECT COUNT (*) FROM contracts").fetchone()[0] 
+        paths=[]
+        for i in range (amount):
+            arquivePath=f'/home/joao/Ethereum Data Analyse/Testes/bytecode{i}.asm'
+            bytecode=con.sql(f"SELECT bytecode FROM contracts WHERE id = {i}").fetchone()[0]
+            with open(arquivePath, 'w') as file:
+                file.write(bytecode)
+            paths.append((arquivePath,i))
+        con.close()
+        return paths
 
-    contractAddresses=[]
-    amount=con.sql("SELECT COUNT(*) FROM transactions").fetchone()[0]
-    
-    for i in range(amount):
-        hash=con.sql(f"SELECT hash FROM transactions WHERE id = {i}").fetchone()[0]
+    def disassembler(duckPath):
+        con=duckdb.connect(database=duckPath,read_only=False)
+        arquivePaths=disassembler.writer(duckPath)     
+        for arquivePath in arquivePaths:
+            result=subprocess.run(['evm','disasm',arquivePath[0]],capture_output=True,text=True)         
+            for i in range(140):             
+                source=con.sql(f"SELECT name FROM opcodes WHERE id = {i}")             
+                query=result.stdout.split().count(str(source))             
+                if (query>0):
+                    con.sql(f"INSERT INTO contract_have_opcodes VALUES ('{arquivePath[1]}','{i}','{query}')")
+        con.close()
 
-        receipt=w3.eth.get_transaction_receipt(hash)
-        
-        contractAddress=receipt.get("contractAddress")
-        blockNumber=receipt.get("blockNumber")
-        
-        contractAddresses.append((contractAddress, blockNumber))
-
-
-    con.close()
-    return contractAddress
-
-def contracts(duckPath,apiPath):
-    w3=Web3(Web3.HTTPProvider(f'{apiPath}'))
-
-    contractAddresses=receipts(duckPath,apiPath)
-
-    con=duckdb.connect(database=duckPath,read_only=False)
-
-    for (contractAddress, blockNumber) in enumerate(contractAddresses, start=0):
-        bytecode=w3.eth.get_code(contractAddress).hex()
-
-        con.sql(f"INSERT INTO contracts SELECT nextval('contract_id'), {contractAddress}, {bytecode}, {blockNumber}")
-        
-    con.close()
-
-duckPath="/home/joao/Ethereum Data Analyse/Database/database-50000-99999.db"
-apiPath="https://mainnet.infura.io/v3/a1396b66469549e8af981d99a0316269"
-contracts(duckPath,apiPath)
+duckPath="~/Ethereum Data Analyse/Database/database-50000-99999.db"
+disassembler.writer(duckPath)
