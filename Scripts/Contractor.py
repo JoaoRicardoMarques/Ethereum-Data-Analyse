@@ -42,6 +42,3 @@ class contractor:
             else:
                 print("erro")
         con.close()
-
-duckPath="/home/joao/Ethereum Data Analyse/Database/database-50000-99999.db"
-apiPath="https://mainnet.infura.io/v3/a1396b66469549e8af981d99a0316269"

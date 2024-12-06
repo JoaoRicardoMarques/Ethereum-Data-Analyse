@@ -7,25 +7,25 @@ from ContractHaveOpcodes_Table import contracts_have_opcodes
 initial = 50000
 final = initial + 9999
 duckPath = f"~/Ethereum-Data-Analyse/Database/database-{initial}-{initial+49999}.db"
+apiPath="https://mainnet.infura.io/v3/a1396b66469549e8af981d99a0316269"
 
-#.create(duckPath)
-#transactions.create(duckPath)
-#contract.create(duckPath)
-#opcodes.create(duckPath)
+blocks.create(duckPath)
+transactions.create(duckPath)
+contract.create(duckPath)
+opcodes.create(duckPath)
 contracts_have_opcodes.create(duckPath)
 
 for i in range(5):
-    blockPath=f"/home/joao/Ethereum Data Analyse/Data/Blocks/blocks-00000{initial}-00000{final}.csv"
-    transactionPath=f"/home/joao/Ethereum Data Analyse/Data/Transactions/transactions-of-blocks-00000{initial}-00000{final}.csv"
+    blockPath=f"~/Ethereum-Data-Analyse/Data/Blocks/blocks-00000{initial}-00000{final}.csv"
+    transactionPath=f"~/Ethereum-Data-Analyse/Data/Transactions/transactions-of-blocks-00000{initial}-00000{final}.csv"
 
-    #blocks.insert(duckPath,blockPath)
-    #transactions.insert(duckPath,transactionPath)
-    #contract.insert(duckPath,contractPath)
-    #opcodes.insert(duckPath)
-    #contracts_have_opcodes.insert(duckPath)
+    blocks.insert(duckPath,blockPath)
+    transactions.insert(duckPath,transactionPath)
     
     initial+=10000
     final+=10000
 
-
+contract.insert(duckPath,apiPath)
+opcodes.insert(duckPath)
+contracts_have_opcodes.insert(duckPath)
 

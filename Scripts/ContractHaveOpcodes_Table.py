@@ -16,7 +16,7 @@ class contracts_have_opcodes:
         con.sql("DROP TABLE IF EXISTS contracts_have_opcodes")
         con.close()
     def insert(duckPath):
-        disassembler(duckPath)
+        disassembler.disassembler(duckPath)
     def delete(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)
         con.sql("DELETE FROM contracts_have_opcodes")

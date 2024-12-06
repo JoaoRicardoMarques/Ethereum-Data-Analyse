@@ -1,5 +1,5 @@
 import duckdb
-
+from Contractor import contractor
 
 class contract:
     def create(duckPath):
@@ -18,10 +18,8 @@ class contract:
         con.sql("DROP TABLE IF EXISTS contracts")
         con.close()
 
-    def insert(duckPath,arquivePath):
-        con=duckdb.connect(database=duckPath,read_only=False)
-        con.sql(f"INSERT INTO contracts SELECT nextval('contract_id'), * FROM read_csv_auto('{arquivePath}')")
-        con.close()
+    def insert(duckPath,apiPath):
+        contractor.contracts(duckPath,apiPath)
 
     def delete(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)
