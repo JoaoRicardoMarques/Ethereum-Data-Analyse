@@ -19,7 +19,7 @@ for i in range(5):
     blockPath=f"~/Ethereum-Data-Analyse/Data/Blocks/blocks-00000{initial}-00000{final}.csv"
     transactionPath=f"~/Ethereum-Data-Analyse/Data/Transactions/transactions-of-blocks-00000{initial}-00000{final}.csv"
 
-    blocks.insert(duckPath,blockPath)
+    blocks.teste2(duckPath,blockPath,transactionPath)
     transactions.insert(duckPath,transactionPath)
     
     initial+=10000
