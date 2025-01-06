@@ -18,7 +18,7 @@ contract.create(duckPath)
 opcodes.create(duckPath)
 contracts_have_opcodes.create(duckPath)
 
-for i in range(35):
+for i in range(40):
     if initial < 100000:
         if initial == 0:
             blockPath=f"~/Ethereum-Data-Analyse/Data/Blocks/blocks-0000000000-0000009999.csv"
@@ -48,3 +48,7 @@ for i in range(35):
 
         initial+=10000
         final+=10000
+
+contract.insert(duckPath,apiPath)
+opcodes.insert(duckPath)
+contracts_have_opcodes.insert(duckPath)
