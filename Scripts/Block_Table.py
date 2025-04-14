@@ -37,13 +37,16 @@ class blocks:
 
     def insert(duckPath, arquivePath1, arquivePath2):
         con = duckdb.connect(database=":memory:", read_only=False)
+        
         blocks = con.sql(f"SELECT DISTINCT block_number FROM read_csv_auto('{arquivePath2}') WHERE to_address IS NULL AND input != '0x'").fetchall()
         con.close()
 
         con = duckdb.connect(database=duckPath,read_only=False)
         for block in blocks:
+            
             tuple = con.sql(f"SELECT * FROM read_csv_auto('{arquivePath1}') WHERE number = {block[0]}").fetchone()
             con.sql(f"INSERT INTO blocks VALUES ({','.join([repr(value) if value is not None else 'NULL' for value in  tuple])})")
+
 
     def delete(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)

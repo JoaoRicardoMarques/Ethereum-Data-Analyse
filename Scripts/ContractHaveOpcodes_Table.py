@@ -23,4 +23,6 @@ class contracts_have_opcodes:
         con.close()
     def show(duckPath):
         con=duckdb.connect(database=duckPath,read_only=True)
-        result=con.sql("SELECT * FROM contracts_have_opcodes")
+        results=con.sql("SELECT * FROM contracts_have_opcodes")
+        for result in results:
+            print(result)
