@@ -1,4 +1,4 @@
-create view instrucoes_por_contrato as 
+CREATE VIEW instrucoes_por_contrato AS 
 SELECT *
 FROM (
     SELECT cho.id_contract, o.name AS opcode, cho.Qntd
@@ -24,9 +24,6 @@ PIVOT (
 		'SWAP7', 'SWAP8', 'SWAP9', 'TIMESTAMP' AS TIMESTAMP_, 'XOR' AS XOR_
     )
 );
-SELECT * from instrucoes_por_contrato;
-drop view instrucoes_por_contrato;
-
 SELECT SUM(ADD), sum(AND_) from instrucoes_por_contrato;
 SELECT 
     SUM(ADD) AS ADD,
