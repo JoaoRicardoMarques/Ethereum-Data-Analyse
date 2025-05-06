@@ -27,3 +27,4 @@ def disasm(id_contract, bytecode, duckPath):
             i += 1  
         if amount != 0:
             con.sql(f"INSERT INTO contracts_have_opcodes(id_contract, id_opcodes, Qntd) VALUES ('{id_contract}', '{instruction[0]}', '{amount}')")
+    con.close()
