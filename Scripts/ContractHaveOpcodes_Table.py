@@ -15,23 +15,20 @@ class contracts_have_opcodes:
         con=duckdb.connect(database=duckPath,read_only=False)
         con.sql("DROP TABLE IF EXISTS contracts_have_opcodes")
         con.close()
+
     def insert(duckPath):
-        con=duckdb.connect(database=duckPath,read_only=True)
-        amount=con.sql("SELECT COUNT(*) FROM contracts").fetchone()[0]
-    con.close()
-        for i in range(0,amount):
-            con=duckdb.connect(database=duckPath,read_only=True) 
-            bytecode = con.sql(f"SELECT bytecode FROM contracts WHERE id = {i}").fetchone()[0]
+        con = duckdb.connect(database=duckPath, read_only=True)
+        results = con.sql("SELECT id, bytecode FROM contracts").fetchall()
         con.close()
-            if bytecode == None:
-                    continue
-                else:
-                    if bytecode.startswith("0x"):
-                            disasm(i,bytecode,duckPath)
-                    else:
-                            prefixe = "0x"
-                            bytecode = prefixe+bytecode
-                            disasm(i,bytecode,duckPath)
+    
+        for contract_id, bytecode in results:
+            if bytecode is None:
+                continue
+            if not bytecode.startswith("0x"):
+                bytecode = "0x" + bytecode
+            disasm(contract_id, bytecode, duckPath)
+    
+
     def delete(duckPath):
         con=duckdb.connect(database=duckPath,read_only=False)
         con.sql("DELETE FROM contracts_have_opcodes")
