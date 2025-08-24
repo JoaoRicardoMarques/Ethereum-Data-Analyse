@@ -25,7 +25,7 @@ PIVOT (
     )
 );
 SELECT SUM(ADD), sum(AND_) from instrucoes_por_contrato;
-SELECT 
+COPY(SELECT 
     SUM(ADD) AS ADD,
     SUM(ADDMOD) AS ADDMOD,
     SUM(ADDRESS) AS ADDRESS,
@@ -165,7 +165,7 @@ SELECT
     SUM(SWAP9) AS SWAP9,
     SUM(TIMESTAMP_) AS TIMESTAMP_,
     SUM(XOR_) AS XOR_
-FROM instrucoes_por_contrato;
+FROM instrucoes_por_contrato) TO 'query.csv' (HEADER, DELIMITER ',');	
 
 
 
